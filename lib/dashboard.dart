@@ -1,20 +1,26 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:loginuicolors/addtask.dart';
-import 'package:loginuicolors/worker_login/page/dashboardata.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:loginuicolors/page/dashboardata.dart';
+import 'package:loginuicolors/dashboarddetails.dart/workassigneddetailpage.dart';
+import 'package:loginuicolors/dashboarddetails.dart/workcorrecive.dart';
+import 'package:loginuicolors/model/model.dart';
+import 'package:loginuicolors/dashboarddetails.dart/workpreventive.dart';
 
 class Dashboard extends StatefulWidget {
+  final List<RecentWorkordersCorrective>? workorders;
+
   final Task? task;
 
-  const Dashboard({Key? key, this.task}) : super(key: key);
+  const Dashboard({Key? key, this.task, this.workorders}) : super(key: key);
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
+  int _selectedIndex = 0;
   List<Task> _tasks = [];
   List<Task> _filteredTasks = [];
 
@@ -143,8 +149,60 @@ class _DashboardState extends State<Dashboard> {
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Icon(Icons.folder_open, size: 40, color: Colors.blue),
+                  Text('Open'),
+                ],
+              ),
+              Column(
+                children: [
+                  Icon(Icons.assignment, size: 40, color: Colors.orange),
+                  Text('Assigned'),
+                ],
+              ),
+              Column(
+                children: [
+                  Icon(Icons.check_circle, size: 40, color: Colors.green),
+                  Text('Closed'),
+                ],
+              ),
+            ],
+          ),
           Expanded(
-            child: _buildTaskList(),
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: [
+                WorkCorrectiveDetailsPage(),
+                WorkAssignedDetailsPage(),
+                WorkPreventiveDetailsPage(),
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work),
+            label: 'Corrective Work',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: 'Assigned Work',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work),
+            label: 'preventive Work',
           ),
         ],
       ),
@@ -166,147 +224,6 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Color.fromARGB(255, 56, 104, 152),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-
-  Widget _buildTaskList() {
-    if (_filteredTasks.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 4.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Icon(Icons.folder_open, size: 40, color: Colors.blue),
-                      Text('Open'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Icon(Icons.assignment, size: 40, color: Colors.orange),
-                      Text('Assigned'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Icon(Icons.check_circle, size: 40, color: Colors.green),
-                      Text('Closed'),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Card(
-                        margin: const EdgeInsets.all(16.0),
-                        elevation: 4.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: Text(
-                              'Tasks',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Card(
-                        margin: const EdgeInsets.all(16.0),
-                        elevation: 4.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Center(
-                            child: Text(
-                              'Recent Work Orders',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return ListView.builder(
-        itemCount: _filteredTasks.length,
-        itemBuilder: (context, index) {
-          return _buildTaskItem(_filteredTasks[index]);
-        },
-      );
-    }
-  }
-
-  Widget _buildTaskItem(Task task) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: ListTile(
-          title: Text(
-            task.taskName,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[900],
-              fontFamily: 'Roboto',
-            ),
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 8),
-              Text(
-                "Description: ${task.description}",
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 4),
-              Text(
-                "Priority: ${task.priority}",
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 4),
-              Text(
-                "Location: ${task.location}",
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:loginuicolors/worker_login/page/workassigneddetailpage.dart';
-import 'package:loginuicolors/worker_login/page/workcorrecive.dart';
-import 'package:loginuicolors/worker_login/page/workpreventive.dart';
+import 'package:loginuicolors/dashboarddetails.dart/workassigneddetailpage.dart';
+import 'package:loginuicolors/dashboarddetails.dart/workcorrecive.dart';
+import 'package:loginuicolors/dashboarddetails.dart/workpreventive.dart';
 import '../model/model.dart';
 
 class DataDashboard extends StatefulWidget {
@@ -57,44 +57,44 @@ class _DataDashboardState extends State<DataDashboard> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WorkAssignedDetailsPage(
-                              workorders: snapshot.data!.workordersAssigned,
-                            ),
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        // MaterialPageRoute(
+                        //   builder: (context) => WorkAssignedDetailsPage(
+                        //     workorders: snapshot.data!.workordersAssigned,
+                        //   ),
+                        // ),
+                        // );
                       },
                       child: Text('Work Order Assigned'),
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WorkPreventiveDetailsPage(
-                              workorders:
-                                  snapshot.data!.recentWorkordersPreventive,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Text('Work Order Preventives'),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => WorkPreventiveDetailsPage(
+                    //           workorders:
+                    //               snapshot.data!.recentWorkordersPreventive,
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: Text('Work Order Preventives'),
+                    // ),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WorkCorrectiveDetailsPage(
-                              workorders:
-                                  snapshot.data!.recentWorkordersCorrective,
-                            ),
-                          ),
-                        );
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkCorrectiveDetailsPage(
+                                  //   workorders:
+                                  //       snapshot.data!.recentWorkordersCorrective,
+                                  // ),
+                                  ),
+                            ));
                       },
                       child: Text('Work Order Correctives'),
                     ),
